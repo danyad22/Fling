@@ -1,5 +1,7 @@
 LeftMouseButton to fling on mouse position
 
-Supported by every level of executors.
+**Supported by every level of executors.**
 
-Checked on solara (Works)
+**Open for Pull requests**
+
+Tested on solara (Works)
