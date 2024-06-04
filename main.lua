@@ -10,6 +10,7 @@ local fakepart = Instance.new("Part", workspace)
 local att1 = Instance.new("Attachment", fakepart)
 local att2 = Instance.new("Attachment", game.Players.LocalPlayer.Character.HumanoidRootPart)
 local body = Instance.new("AlignPosition", fakepart)
+local mouse = game.Players.LocalPlayer:GetMouse()
 body.Attachment0 = att2
 body.Attachment1 = att1
 body.RigidityEnabled = true
@@ -71,6 +72,8 @@ spawn(function()
 		task.wait(math.random(0,attack)/50)	
 	end
 end)
+--[[
+
 spawn(function()
 	while true do
 		if game.Players.LocalPlayer.Character.Humanoid.MoveDirection.Magnitude ~= 0 then
@@ -79,16 +82,89 @@ spawn(function()
 		task.wait()
 	end
 end)
+
+]]
+local w = false
+local a = false
+local s = false
+local d = false
+mouse.KeyDown:Connect(function(key)
+	if key == "w" then
+		w = true
+		--fakepart.Position = fakepart.Position + workspace.CurrentCamera.CFrame.LookVector * 2
+	end
+	if key == "a" then
+		a = true
+		--fakepart.Position = fakepart.Position - workspace.CurrentCamera.CFrame.RightVector * 2
+	end
+	if key == "s" then
+		s = true
+		--fakepart.Position = fakepart.Position - workspace.CurrentCamera.CFrame.LookVector * 2
+	end
+	if key == "d" then
+		d = true
+		--fakepart.Position = fakepart.Position + workspace.CurrentCamera.CFrame.RightVector * 2
+	end
+end)
+mouse.KeyUp:Connect(function(key)
+	if key == "w" then
+		w = false
+		--fakepart.Position = fakepart.Position + workspace.CurrentCamera.CFrame.LookVector * 2
+	end
+	if key == "a" then
+		a = false
+		--fakepart.Position = fakepart.Position - workspace.CurrentCamera.CFrame.RightVector * 2
+	end
+	if key == "s" then
+		s = false
+		--fakepart.Position = fakepart.Position - workspace.CurrentCamera.CFrame.LookVector * 2
+	end
+	if key == "d" then
+		d = false
+		--fakepart.Position = fakepart.Position + workspace.CurrentCamera.CFrame.RightVector * 2
+	end
+end)
+game:GetService("RunService").Heartbeat:Connect(function()
+	if w then
+		fakepart.Position = fakepart.Position + workspace.CurrentCamera.CFrame.LookVector * 2
+	end
+	if a then
+		fakepart.Position = fakepart.Position - workspace.CurrentCamera.CFrame.RightVector * 2
+	end
+	if s then
+		fakepart.Position = fakepart.Position - workspace.CurrentCamera.CFrame.LookVector * 2
+	end
+	if d then
+		fakepart.Position = fakepart.Position + workspace.CurrentCamera.CFrame.RightVector * 2
+	end
+end)
 spawn(function()
 	while true do
-		if math.random(0,2)==1 then
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position) * CFrame.fromEulerAnglesXYZ(0,math.rad(90),0)
-		elseif math.random(0,2)==2 then
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position) * CFrame.fromEulerAnglesXYZ(math.rad(math.random(-5,5)),math.rad(math.random(-5,5)),math.rad(math.random(-5,5)))
-		else
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position) * CFrame.fromEulerAnglesXYZ(0,math.rad(180),0)
+		local players = game.Players:GetPlayers()
+		local closest = nil
+		local shortestDistance = math.huge
+		local localPlayer = game.Players.LocalPlayer
+		local localRootPart = localPlayer.Character.HumanoidRootPart
+
+		for _, player in pairs(players) do
+			if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+				local targetRootPart = player.Character.HumanoidRootPart
+				local distance = (localRootPart.Position - targetRootPart.Position).magnitude
+				if distance < shortestDistance then
+					shortestDistance = distance
+					closest = player
+				end
+			end
 		end
-		fakepart.Rotation = game.Players.LocalPlayer.Character.HumanoidRootPart.Rotation
+
+		if closest then
+			local targetRootPart = closest.Character.HumanoidRootPart
+			local direction = (targetRootPart.Position - localRootPart.Position).unit
+			local lookAtCFrame = CFrame.lookAt(localRootPart.Position, Vector3.new(targetRootPart.Position.X,localRootPart.Position.Y,targetRootPart.Position.Z))
+			localRootPart.CFrame = lookAtCFrame
+		end
+
+		fakepart.Rotation = localRootPart.Rotation
 		task.wait()
 	end
 end)
@@ -100,19 +176,11 @@ end)
 mouse.Button1Up:Connect(function()
 	isdown = false
 end)
-spawn(function()
-	while true do
-		task.wait()
-		if isdown then
-			for i = 0,360,5 do
-				task.wait()
-				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.Position + Vector3.new(math.random(-5,5)/5,math.random(0,18)/2,math.random(-5,5)/5)) * CFrame.fromEulerAnglesXYZ(math.rad(90),0,math.rad(i))
-				game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(math.random(-5000,5000),math.random(-50,50) * power,math.random(-5000,5000))	
-				if not isdown then
-					break
-				end	
-			end
-		end
+game:GetService("RunService").Heartbeat:Connect(function()
+	if isdown then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.Position + Vector3.new(math.random(-5,5)/5,math.random(0,8)/2,math.random(-5,5)/5)) * CFrame.fromEulerAnglesXYZ(0,math.rad(45),0)
+		game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(10000,9999,-9999)
+		game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(-17.7,500,17.7)
 	end
 end)
 spawn(function()
@@ -132,9 +200,11 @@ while true do
 	else
 		game.Players.LocalPlayer.Character.Humanoid.Jump = false
 	end
-	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = fakepart.CFrame
+	if not isdown then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = fakepart.CFrame
+	end
 	game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(math.random(-250,250),math.random(-500,500),math.random(-250,250))
-	game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(math.random(-250,250),math.random(-500,500),math.random(-250,250))
+	--game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(math.random(-250,250),math.random(-500,500),math.random(-250,250))
 	--game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(0,180,0)
 	task.wait()
 end
