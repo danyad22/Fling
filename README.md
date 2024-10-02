@@ -13,3 +13,7 @@ I welcome contributions! If you’d like to improve this script or add new featu
 3. Commit your changes: `git commit -m 'Add feature'`.
 4. Push to the branch: `git push origin feature/your-feature-name`.
 5. Open a pull request.
+
+
+
+###### ples star :3
